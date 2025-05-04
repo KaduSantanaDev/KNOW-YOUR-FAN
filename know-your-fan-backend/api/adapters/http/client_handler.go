@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -62,6 +63,8 @@ func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error on sending message to kafka", http.StatusInternalServerError)
 		return
 	}
+
+	log.Println(newClient.GetID(), newClient.GetName())
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]any{
