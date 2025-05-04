@@ -26,13 +26,13 @@ func main() {
 	clientHandler := handlers.NewClientHandler(*clientService)
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // ou "*" no dev
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
-		AllowCredentials: true,
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: false,
 	}))
+	r.Use(middleware.Logger)
 
 	r.Post("/api/v1/clients", clientHandler.Create)
 
