@@ -1,4 +1,4 @@
-// package handlers
+package handlers
 
 // type CreateClientDTO struct {
 // 	Name         string `json:"name"`
