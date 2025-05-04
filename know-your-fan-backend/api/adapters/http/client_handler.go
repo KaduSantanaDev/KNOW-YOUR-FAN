@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
+	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/KaduSantanaDev/know-your-fan-api/application"
 	"github.com/KaduSantanaDev/know-your-fan-api/application/service"
@@ -20,37 +21,54 @@ func NewClientHandler(clientService service.ClientService) *ClientHandler {
 }
 
 func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var createClientDTO CreateClientDTO
-
-	if err := json.NewDecoder(r.Body).Decode(&createClientDTO); err != nil {
-		log.Println(err)
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+	err := r.ParseMultipartForm(10 << 20) // até 10 MB
+	if err != nil {
+		http.Error(w, "Erro ao ler o corpo da requisição", http.StatusBadRequest)
 		return
 	}
 
+	documentFile, _, err := r.FormFile("document")
+	if err != nil {
+		http.Error(w, "Documento inválido", http.StatusBadRequest)
+		return
+	}
+
+	defer documentFile.Close()
+
+	docBytes, _ := io.ReadAll(documentFile)
+
 	newClient := application.NewClient()
-	newClient.Name = createClientDTO.Name
-	newClient.Email = createClientDTO.Email
-	newClient.CPF = createClientDTO.CPF
-	newClient.Document = createClientDTO.Document
+	newClient.Name = r.FormValue("name")
+	newClient.Email = r.FormValue("email")
+	newClient.CPF = r.FormValue("cpf")
+	newClient.Document = docBytes
 	newClient.Address = application.Address{
-		Street:       createClientDTO.Street,
-		Number:       createClientDTO.Number,
-		Complement:   createClientDTO.Complement,
-		Neighborhood: createClientDTO.Neighborhood,
-		City:         createClientDTO.City,
-		State:        createClientDTO.State,
-		CEP:          createClientDTO.CEP,
+		Street:       r.FormValue("street"),
+		Number:       parseInt32(r.FormValue("number")),
+		Complement:   r.FormValue("complement"),
+		Neighborhood: r.FormValue("neighborhood"),
+		City:         r.FormValue("city"),
+		State:        r.FormValue("state"),
+		CEP:          r.FormValue("cep"),
 	}
 
 	if err := c.ClientService.SendMessage(newClient.GetID(), newClient.GetName(), newClient.GetDocument()); err != nil {
 		http.Error(w, "error on sending message to kafka", http.StatusInternalServerError)
 	}
 
-	c.ClientService.Create(newClient)
+	createdClient, err := c.ClientService.Create(newClient)
+	if err != nil {
+		http.Error(w, "error while creating a client", http.StatusInternalServerError)
+	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{
+	json.NewEncoder(w).Encode(map[string]any{
 		"message": "client created",
+		"client":  createdClient,
 	})
+}
+
+func parseInt32(s string) int32 {
+	i, _ := strconv.Atoi(s)
+	return int32(i)
 }
