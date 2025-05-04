@@ -32,7 +32,7 @@ export default function App() {
     formData.append("cep", zip);
 
     try {
-      const res = await fetch("http://app:3031/api/v1/clients", {
+      const res = await fetch("http://localhost:3031/api/v1/clients", {
         method: "POST",
         body: formData,
       });
