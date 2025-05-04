@@ -7,5 +7,5 @@ type Address struct {
 	Neighborhood string
 	City         string
 	State        string
-	CEP          int64
+	CEP          string
 }
