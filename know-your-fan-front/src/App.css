@@ -1,0 +1,88 @@
+/* Base */
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #000000; /* Preto */
+  color: #FFFFFF; /* Branco */
+  font-family: 'Segoe UI', sans-serif;
+  height: 100%;
+}
+
+/* Container principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #000000;
+}
+
+/* Formulário */
+.login-form {
+  background-color: #111111;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); /* Glow dourado */
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Títulos */
+.login-form h2 {
+  margin-bottom: 1rem;
+  color: #FFD700; /* Dourado */
+  text-align: center;
+}
+
+.login-form h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  color: #FFFFFF;
+}
+
+/* Grupos de input */
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #FFFFFF;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #1A1A1A;
+  border: 1px solid #FFD700;
+  border-radius: 6px;
+  color: #FFFFFF;
+  font-size: 1rem;
+}
+
+/* Botão */
+.login-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #FFD700;
+  color: #000000;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login-button:hover {
+  background-color: #e6c200; /* Dourado mais escuro no hover */
+}
+
+/* Preview da imagem */
+img.preview {
+  margin-top: 1rem;
+  max-width: 100%;
+  border-radius: 8px;
+  border: 2px solid #FFD700;
+}

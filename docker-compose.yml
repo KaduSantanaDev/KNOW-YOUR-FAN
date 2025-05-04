@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build:
+      context: ./know-your-fan-front
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./know-your-fan-front:/app
+      - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
+    command: npm run dev
