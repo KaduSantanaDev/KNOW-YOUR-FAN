@@ -24,6 +24,14 @@ services:
       - "3031:3031"
     networks:
       - kafka-host
+  
+  validation-service:
+    build:
+      context: ./know-your-fan-backend/document-validator
+    networks:
+      - kafka-host
+    depends_on:
+      - kafka
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
