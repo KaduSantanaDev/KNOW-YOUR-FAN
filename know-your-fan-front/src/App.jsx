@@ -4,8 +4,8 @@ import './App.css';
 export default function App() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [cpf, setCpf] = useState('');
   const [image, setImage] = useState(null);
-  const [cpf, setcpf] = useState(null);
 
   const [street, setStreet] = useState('');
   const [number, setNumber] = useState('');
@@ -15,12 +15,33 @@ export default function App() {
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
 
-
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Usuário:', username);
-    console.log('Senha:', password);
+
+    const formData = new FormData();
+    formData.append("name", username);
+    formData.append("email", email);
+    formData.append("cpf", cpf);
+    formData.append("document", image);
+    formData.append("street", street);
+    formData.append("number", number);
+    formData.append("complement", complement);
+    formData.append("neighborhood", neighborhood);
+    formData.append("city", city);
+    formData.append("state", state);
+    formData.append("cep", zip);
+
+    try {
+      const res = await fetch("http://app:3031/api/v1/clients", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+      console.log("Resposta do servidor:", result);
+    } catch (err) {
+      console.error("Erro ao enviar:", err);
+    }
   };
 
   return (
@@ -32,32 +53,31 @@ export default function App() {
           <input
             type="text"
             id="name"
-            value={name}
+            value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
         <div className="input-group">
-          <label htmlFor="email">email:</label>
+          <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
         <div className="input-group">
-          <label htmlFor="cpf">cpf:</label>
+          <label htmlFor="cpf">CPF:</label>
           <input
             type="text"
             id="cpf"
             value={cpf}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setCpf(e.target.value)}
             required
           />
         </div>
-
         <div className="input-group">
           <label htmlFor="image">Documento:</label>
           <input
@@ -145,7 +165,7 @@ export default function App() {
             required
           />
         </div>
-        <button type="submit" className="login-button">Entrar</button>
+        <button type="submit" className="login-button">Cadastrar</button>
       </form>
     </div>
   );
