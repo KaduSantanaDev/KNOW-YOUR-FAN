@@ -21,7 +21,7 @@ type ClientInterface interface {
 }
 
 type ClientServiceInterface interface {
-	Create(name, email, cpf string, address Address)
+	Create(clientInterface ClientInterface) (ClientInterface, error)
 }
 
 func (c *Client) GetID() string {
