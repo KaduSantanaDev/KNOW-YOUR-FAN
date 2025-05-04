@@ -11,6 +11,8 @@ services:
     environment:
       - HOST=0.0.0.0
     command: npm run dev
+    networks:
+      - kafka-host
 
   app:
     build:
