@@ -43,6 +43,10 @@ func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 		CEP:          createClientDTO.CEP,
 	}
 
+	if err := c.ClientService.SendMessage(newClient.GetID(), newClient.GetName(), newClient.GetDocument()); err != nil {
+		http.Error(w, "error on sending message to kafka", http.StatusInternalServerError)
+	}
+
 	c.ClientService.Create(newClient)
 
 	w.WriteHeader(http.StatusCreated)
