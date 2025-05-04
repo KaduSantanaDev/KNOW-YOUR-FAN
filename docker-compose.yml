@@ -18,6 +18,8 @@ services:
     container_name: gateway
     volumes:
       - ./know-your-fan-backend/api:/go/src/
+    ports:
+      - "3031:3031"
     networks:
       - kafka-host
 
