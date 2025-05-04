@@ -15,8 +15,10 @@ type Client struct {
 
 type ClientInterface interface {
 	GetID() string
+	GetName() string
+	GetCPF() string
 	GetEmail() string
-	GetDocument() string
+	GetDocument() []byte
 	GetAddress() Address
 }
 
@@ -35,6 +37,9 @@ func (c *Client) GetEmail() string {
 }
 func (c *Client) GetCPF() string {
 	return c.CPF
+}
+func (c *Client) GetDocument() []byte {
+	return c.Document
 }
 func (c *Client) GetAddress() Address {
 	return c.Address
