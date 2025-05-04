@@ -4,6 +4,7 @@ go 1.23.8
 
 require (
 	github.com/confluentinc/confluent-kafka-go/v2 v2.10.0
+	github.com/go-chi/cors v1.2.1
 	github.com/google/uuid v1.6.0
 	modernc.org/sqlite v1.37.0
 )
