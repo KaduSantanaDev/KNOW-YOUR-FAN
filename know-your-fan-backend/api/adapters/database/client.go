@@ -65,3 +65,17 @@ func (c *ClientDB) validateClientDoesNotExist(client application.ClientInterface
 
 	return fmt.Errorf("cliente com ID %s já existe", client.GetID())
 }
+
+func (c *ClientDB) UpdateStatus(client application.ClientInterface) (application.ClientInterface, error) {
+	stmt, err := c.db.Prepare(`update clients set status = $1 where id = $2`)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(client.GetStatus(), client.GetID())
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
