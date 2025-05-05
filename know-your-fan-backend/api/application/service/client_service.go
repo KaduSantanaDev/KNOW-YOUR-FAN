@@ -39,6 +39,7 @@ func (c *ClientService) SendMessage(id, name string, document []byte) error {
 		ID:       id,
 		Name:     name,
 		Document: document,
+		Valid:    nil,
 	}
 
 	data, err := json.Marshal(event)
@@ -54,6 +55,5 @@ func (c *ClientService) SendMessage(id, name string, document []byte) error {
 		return err
 	}
 
-	log.Println("mandou a mensagem")
 	return nil
 }
