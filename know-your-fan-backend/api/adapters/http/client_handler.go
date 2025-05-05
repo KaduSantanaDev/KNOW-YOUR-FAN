@@ -22,7 +22,7 @@ func NewClientHandler(clientService service.ClientService) *ClientHandler {
 }
 
 func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseMultipartForm(10 << 20) // até 10 MB
+	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "Erro ao ler o corpo da requisição", http.StatusBadRequest)
 		return
@@ -55,7 +55,11 @@ func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	createdClient, err := c.ClientService.Create(newClient)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]any{
+			"message": "error creating client",
+			"error":   err.Error(),
+		})
 		return
 	}
 
