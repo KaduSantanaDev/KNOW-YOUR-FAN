@@ -21,8 +21,8 @@ func (c *ClientDB) Create(client application.ClientInterface) (application.Clien
 		return nil, err
 	}
 
-	stmt, err := c.db.Prepare(`insert into clients(id, name, email, cpf, document, street, number, complement, neighborhood, city, state, cep)
-									values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+	stmt, err := c.db.Prepare(`insert into clients(id, name, email, cpf, document, street, number, complement, neighborhood, city, state, cep, status)
+									values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
 		`)
 
 	if err != nil {
@@ -43,6 +43,7 @@ func (c *ClientDB) Create(client application.ClientInterface) (application.Clien
 		client.GetAddress().City,
 		client.GetAddress().State,
 		client.GetAddress().CEP,
+		client.GetStatus(),
 	)
 
 	if err != nil {
