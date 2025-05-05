@@ -22,6 +22,7 @@ type ClientInterface interface {
 	GetDocument() []byte
 	GetAddress() Address
 	GetStatus() bool
+	UpdateStatus(status bool)
 }
 
 type ClientServiceInterface interface {
@@ -48,6 +49,9 @@ func (c *Client) GetAddress() Address {
 }
 func (c *Client) GetStatus() bool {
 	return c.Status
+}
+func (c *Client) UpdateStatus(status bool) {
+	c.Status = status
 }
 
 func NewClient() *Client {
