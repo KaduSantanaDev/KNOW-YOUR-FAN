@@ -32,6 +32,11 @@ func (c *ClientService) Create(client application.ClientInterface) (application.
 	newClient.CPF = client.GetCPF()
 	newClient.Document = client.GetDocument()
 
+	result, err := c.Repository.Create(newClient)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := c.sendMessage(newClient.GetID(), newClient.GetName(), newClient.GetDocument()); err != nil {
 		return nil, err
 	}
@@ -40,10 +45,6 @@ func (c *ClientService) Create(client application.ClientInterface) (application.
 		return nil, errors.New("Invalid document")
 	}
 
-	result, err := c.Repository.Create(newClient)
-	if err != nil {
-		return nil, err
-	}
 	return result, nil
 }
 

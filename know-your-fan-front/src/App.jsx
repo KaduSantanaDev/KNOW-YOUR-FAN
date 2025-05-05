@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import './App.css';
 
 export default function App() {
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [cpf, setCpf] = useState('');
@@ -36,11 +39,9 @@ export default function App() {
         method: "POST",
         body: formData,
       });
-
-      const result = await res.json();
-      console.log("Resposta do servidor:", result);
+      console.log(res.json())
     } catch (err) {
-      console.error("Erro ao enviar:", err);
+      console.log(err)
     }
   };
 
