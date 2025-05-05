@@ -55,12 +55,7 @@ func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	createdClient, err := c.ClientService.Create(newClient)
 	if err != nil {
-		http.Error(w, "error while creating a client", http.StatusInternalServerError)
-		return
-	}
-
-	if err := c.ClientService.SendMessage(newClient.GetID(), newClient.GetName(), newClient.GetDocument()); err != nil {
-		http.Error(w, "error on sending message to kafka", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
