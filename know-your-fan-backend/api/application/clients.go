@@ -11,6 +11,7 @@ type Client struct {
 	CPF      string
 	Document []byte
 	Address  Address
+	Status   bool
 }
 
 type ClientInterface interface {
@@ -20,6 +21,7 @@ type ClientInterface interface {
 	GetEmail() string
 	GetDocument() []byte
 	GetAddress() Address
+	GetStatus() bool
 }
 
 type ClientServiceInterface interface {
@@ -43,6 +45,9 @@ func (c *Client) GetDocument() []byte {
 }
 func (c *Client) GetAddress() Address {
 	return c.Address
+}
+func (c *Client) GetStatus() bool {
+	return c.Status
 }
 
 func NewClient() *Client {
