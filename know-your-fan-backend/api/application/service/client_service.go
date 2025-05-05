@@ -45,6 +45,22 @@ func (c *ClientService) Create(client application.ClientInterface) (application.
 		return nil, errors.New("Invalid document")
 	}
 
+	result, err = c.UpdateStatus(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (c *ClientService) UpdateStatus(client application.ClientInterface) (application.ClientInterface, error) {
+	client.UpdateStatus(true)
+
+	result, err := c.Repository.UpdateStatus(client)
+	if err != nil {
+		return nil, err
+	}
+
 	return result, nil
 }
 
