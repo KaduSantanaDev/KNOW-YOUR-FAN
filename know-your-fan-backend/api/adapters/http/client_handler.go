@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -52,6 +51,7 @@ func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 		State:        r.FormValue("state"),
 		CEP:          r.FormValue("cep"),
 	}
+	newClient.Status = false
 
 	createdClient, err := c.ClientService.Create(newClient)
 	if err != nil {
@@ -63,16 +63,40 @@ func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(newClient.GetID(), newClient.GetName())
-
+	updatedClient, err := c.ClientService.UpdateStatus(createdClient)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]any{
+			"message": "error updating client status",
+			"error":   err.Error(),
+		})
+	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]any{
 		"message": "client created",
-		"client":  createdClient,
+		"client":  updatedClient,
 	})
 }
 
 func parseInt32(s string) int32 {
 	i, _ := strconv.Atoi(s)
 	return int32(i)
+}
+
+func (c *ClientHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	clients, err := c.ClientService.GetAll()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]any{
+			"message": "error getting clients",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]any{
+		"message": "clients retrieved",
+		"clients": clients,
+	})
 }

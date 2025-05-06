@@ -13,6 +13,16 @@ services:
     command: npm run dev
     networks:
       - kafka-host
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=clients
+    ports:
+      - "5432:5432"
+    networks:
+      - kafka-host
 
   app:
     build:
@@ -28,6 +38,7 @@ services:
   validation-service:
     build:
       context: ./know-your-fan-backend/document-validator
+    container_name: validation-service
     networks:
       - kafka-host
     depends_on:

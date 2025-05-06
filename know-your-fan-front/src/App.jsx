@@ -39,9 +39,10 @@ export default function App() {
         method: "POST",
         body: formData,
       });
-      console.log(res.json())
+      const data = await res.json();
+      console.log('Response:', data);
     } catch (err) {
-      console.log(err)
+      console.error('Error:', err);
     }
   };
 

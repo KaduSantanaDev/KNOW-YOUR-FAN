@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/KaduSantanaDev/know-your-fan-api/application"
 )
@@ -16,15 +17,82 @@ func NewClientDB(db *sql.DB) *ClientDB {
 	return &ClientDB{db: db}
 }
 
+func (c *ClientDB) GetAll() ([]application.ClientInterface, error) {
+	rows, err := c.db.Query(`SELECT id, name, email, cpf, document, street, number, complement, neighborhood, city, state, cep, status FROM clients`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var clients []application.ClientInterface
+
+	for rows.Next() {
+		var client application.Client
+		var address application.Address
+		err := rows.Scan(
+			&client.ID,
+			&client.Name,
+			&client.Email,
+			&client.CPF,
+			&client.Document,
+			&address.Street,
+			&address.Number,
+			&address.Complement,
+			&address.Neighborhood,
+			&address.City,
+			&address.State,
+			&address.CEP,
+			&client.Status,
+		)
+		if err != nil {
+			return nil, err
+		}
+		client.Address = address
+		clients = append(clients, &client)
+	}
+
+	return clients, nil
+}
+
+func (c *ClientDB) GetByID(id string) (application.ClientInterface, error) {
+	row := c.db.QueryRow(`SELECT id, name, email, cpf, document, street, number, complement, neighborhood, city, state, cep, status FROM clients WHERE id = $1`, id)
+
+	var client application.Client
+	var address application.Address
+
+	err := row.Scan(
+		&client.ID,
+		&client.Name,
+		&client.Email,
+		&client.CPF,
+		&client.Document,
+		&address.Street,
+		&address.Number,
+		&address.Complement,
+		&address.Neighborhood,
+		&address.City,
+		&address.State,
+		&address.CEP,
+		&client.Status,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	client.Address = address
+
+	return &client, nil
+}
+
 func (c *ClientDB) Create(client application.ClientInterface) (application.ClientInterface, error) {
 	if err := c.validateClientDoesNotExist(client); err != nil {
 		return nil, err
 	}
 
-	stmt, err := c.db.Prepare(`insert into clients(id, name, email, cpf, document, street, number, complement, neighborhood, city, state, cep, status)
-									values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
-		`)
-
+	stmt, err := c.db.Prepare(`
+		INSERT INTO clients(id, name, email, cpf, document, street, number, complement, neighborhood, city, state, cep, status)
+		VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+	`)
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +101,8 @@ func (c *ClientDB) Create(client application.ClientInterface) (application.Clien
 	_, err = stmt.Exec(
 		client.GetID(),
 		client.GetName(),
-		client.GetCPF(),
 		client.GetEmail(),
+		client.GetCPF(),
 		client.GetDocument(),
 		client.GetAddress().Street,
 		client.GetAddress().Number,
@@ -47,14 +115,16 @@ func (c *ClientDB) Create(client application.ClientInterface) (application.Clien
 	)
 
 	if err != nil {
+		log.Println("Erro ao inserir cliente:", err)
 		return nil, err
 	}
+
 	return client, nil
 }
 
 func (c *ClientDB) validateClientDoesNotExist(client application.ClientInterface) error {
 	var existingID string
-	err := c.db.QueryRow(`SELECT id FROM clients WHERE id = ?`, client.GetID()).Scan(&existingID)
+	err := c.db.QueryRow(`SELECT id FROM clients WHERE id = $1`, client.GetID()).Scan(&existingID)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -67,7 +137,7 @@ func (c *ClientDB) validateClientDoesNotExist(client application.ClientInterface
 }
 
 func (c *ClientDB) UpdateStatus(client application.ClientInterface) (application.ClientInterface, error) {
-	stmt, err := c.db.Prepare(`update clients set status = $1 where id = $2`)
+	stmt, err := c.db.Prepare(`UPDATE clients SET status = $1 WHERE id = $2`)
 	if err != nil {
 		return nil, err
 	}

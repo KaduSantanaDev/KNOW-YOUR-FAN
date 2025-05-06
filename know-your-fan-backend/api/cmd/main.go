@@ -11,11 +11,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	_ "modernc.org/sqlite"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	db, err := sql.Open("sqlite", "./cmd/data.db")
+	db, err := sql.Open("postgres", "postgresql://root:secret@postgres:5432/clients?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,6 +35,7 @@ func main() {
 	r.Use(middleware.Logger)
 
 	r.Post("/api/v1/clients", clientHandler.Create)
+	r.Get("/api/v1/clients", clientHandler.GetAll)
 
 	log.Println("Servidor ouvindo em http://localhost:3031")
 	if err := http.ListenAndServe(":3031", r); err != nil {

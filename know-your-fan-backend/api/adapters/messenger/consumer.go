@@ -41,27 +41,9 @@ func (kc *KafkaConsumer) Consume(ctx context.Context, handle func(msg *kafka.Mes
 	log.Println("start consuming")
 
 	for {
-		select {
-		case <-ctx.Done():
-			log.Println("Context canceled")
-			return
-		case sig := <-sigchan:
-			log.Printf("Sinal capturado: %v, stop consuming", sig)
-			return
-		default:
-			msg, err := kc.consumer.ReadMessage(-1)
-			if err != nil {
-				log.Printf("errorto read messages, %v", err)
-				continue
-			}
-
-			log.Printf("📨 Message recieved (key=%s): %s", string(msg.Key), string(msg.Value))
-			handle(msg)
-
-			_, err = kc.consumer.CommitMessage(msg)
-			if err != nil {
-				log.Printf("error to commit offset: %v", err)
-			}
+		msg, err := kc.consumer.ReadMessage(-1)
+		if err == nil {
+			log.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
 		}
 	}
 }

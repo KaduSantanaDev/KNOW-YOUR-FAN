@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"time"
 
@@ -24,15 +23,21 @@ func NewClientService(repository database.ClientDB) *ClientService {
 	}
 }
 
-func (c *ClientService) Create(client application.ClientInterface) (application.ClientInterface, error) {
-	newClient := application.NewClient()
-	newClient.Address = client.GetAddress()
-	newClient.Email = client.GetEmail()
-	newClient.Name = client.GetName()
-	newClient.CPF = client.GetCPF()
-	newClient.Document = client.GetDocument()
+func (c *ClientService) GetAll() ([]application.ClientInterface, error) {
+	return c.Repository.GetAll()
+}
 
-	result, err := c.Repository.Create(newClient)
+func (c *ClientService) Create(client application.ClientInterface) (application.ClientInterface, error) {
+	newClient := application.Client{
+		ID:       client.GetID(),
+		Address:  client.GetAddress(),
+		Email:    client.GetEmail(),
+		Name:     client.GetName(),
+		CPF:      client.GetCPF(),
+		Document: client.GetDocument(),
+	}
+
+	createdClient, err := c.Repository.Create(&newClient)
 	if err != nil {
 		return nil, err
 	}
@@ -41,16 +46,9 @@ func (c *ClientService) Create(client application.ClientInterface) (application.
 		return nil, err
 	}
 
-	if !c.consumeMessage(newClient.GetID(), newClient.GetName()) {
-		return nil, errors.New("Invalid document")
-	}
+	c.consumeMessage(newClient.GetID(), newClient.GetName())
 
-	result, err = c.UpdateStatus(result)
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return createdClient, nil
 }
 
 func (c *ClientService) UpdateStatus(client application.ClientInterface) (application.ClientInterface, error) {
@@ -91,6 +89,11 @@ func (c *ClientService) sendMessage(id, name string, document []byte) error {
 func (c *ClientService) consumeMessage(id, name string) bool {
 	consumer := messenger.NewKafkaConsumer("kafka:9092", "document-validation-result")
 	resultChan := make(chan bool)
+	client, err := c.Repository.GetByID(id)
+	if err != nil {
+		return false
+	}
+	log.Println("Achou pelo id")
 
 	go func() {
 		defer close(resultChan)
@@ -101,12 +104,18 @@ func (c *ClientService) consumeMessage(id, name string) bool {
 				log.Printf(err.Error())
 				return
 			}
-			if string(msg.Key) != id {
-				return
-			}
+			log.Println("Consumiu a mensagem", result.Valid)
 
 			if result.Valid != nil {
+				client.UpdateStatus(true)
+				log.Println("Client updated")
+
+				_, err := c.Repository.UpdateStatus(client)
+				if err != nil {
+					return
+				}
 				resultChan <- *result.Valid
+				log.Println("Foi pro channel")
 			}
 		})
 	}()
@@ -114,7 +123,7 @@ func (c *ClientService) consumeMessage(id, name string) bool {
 	select {
 	case valid := <-resultChan:
 		return valid
-	case <-time.After(5 * time.Second):
+	case <-time.After(15 * time.Second):
 		return false
 	}
 

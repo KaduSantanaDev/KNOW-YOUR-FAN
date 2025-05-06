@@ -10,7 +10,6 @@ import producer
 c = Consumer({
     'bootstrap.servers': 'kafka:9092',
     'group.id': 'test',
-    'auto.offset.reset': 'earliest'
 })
 
 c.subscribe(['document-validation'])
