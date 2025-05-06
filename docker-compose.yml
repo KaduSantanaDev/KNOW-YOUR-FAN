@@ -18,9 +18,11 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=clients
+      - POSTGRES_DB=knowyourfan
     ports:
       - "5432:5432"
+    volumes:
+      - ./know-your-fan-backend/api/adapters/database/init/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - kafka-host
 
@@ -34,6 +36,8 @@ services:
       - "3031:3031"
     networks:
       - kafka-host
+    depends_on:
+      - postgres
   
   validation-service:
     build:

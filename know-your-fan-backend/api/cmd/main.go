@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/KaduSantanaDev/know-your-fan-api/adapters/database"
 	handlers "github.com/KaduSantanaDev/know-your-fan-api/adapters/http"
@@ -11,11 +13,27 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Arquivo .env não encontrado, usando variáveis do sistema")
+	}
+}
+
 func main() {
-	db, err := sql.Open("postgres", "postgresql://root:secret@postgres:5432/clients?sslmode=disable")
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+	)
+
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
