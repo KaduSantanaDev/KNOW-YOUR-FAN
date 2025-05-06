@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
+import './styles/BackgroundPattern.css';
+import Toast from './components/Toast';
 
 export default function App() {
   const [showToast, setShowToast] = useState(false);
@@ -39,15 +41,22 @@ export default function App() {
         method: "POST",
         body: formData,
       });
-      const data = await res.json();
-      console.log('Response:', data);
+      setToastMessage('Cadastro realizado com sucesso!');
+      setShowToast(true);
     } catch (err) {
       console.error('Error:', err);
+      setToastMessage('Erro ao realizar cadastro. Tente novamente.');
+      setShowToast(true);
     }
   };
 
   return (
     <div className="login-container">
+      <Toast 
+        show={showToast}
+        message={toastMessage}
+        onClose={() => setShowToast(false)}
+      />
       <form onSubmit={handleSubmit} className="login-form">
         <h2>Cadastro</h2>
         <div className="input-group">

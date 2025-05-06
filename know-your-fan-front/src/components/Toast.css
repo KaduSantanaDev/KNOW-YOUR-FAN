@@ -1,0 +1,28 @@
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #333;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateX(120%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toast-content p {
+  margin: 0;
+  font-size: 14px;
+} 
