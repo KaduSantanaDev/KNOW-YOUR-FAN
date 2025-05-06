@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
-import './styles/BackgroundPattern.css';
 import Toast from './components/Toast';
+import Nav from './components/Nav';
 
 export default function App() {
   const [showToast, setShowToast] = useState(false);
@@ -51,8 +51,10 @@ export default function App() {
   };
 
   return (
-    <div className="login-container">
-      <Toast 
+    <>
+      <Nav className="navbar-container" />
+      <div className="login-container">
+        <Toast 
         show={showToast}
         message={toastMessage}
         onClose={() => setShowToast(false)}
@@ -179,5 +181,6 @@ export default function App() {
         <button type="submit" className="login-button">Cadastrar</button>
       </form>
     </div>
+    </>
   );
 }

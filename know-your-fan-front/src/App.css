@@ -8,36 +8,38 @@ body, html {
   height: 100%;
 }
 
-/* Container principal */
-.app-container {
-  min-height: 100vh;
-  width: 100%;
-  position: relative;
-}
-
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   padding: 2rem;
-  background-color: #000000;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Formulário */
 .login-form {
-  background-color: #111111;
+  background-color: rgba(17, 17, 17, 0.3);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); /* Glow dourado */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
   width: 100%;
   max-width: 420px;
 }
 
+.navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+}
+
+
 /* Títulos */
 .login-form h2 {
   margin-bottom: 1rem;
-  color: #FFD700; /* Dourado */
+  color: #FFF; /* Dourado */
   text-align: center;
 }
 
@@ -62,18 +64,18 @@ body, html {
   width: 100%;
   padding: 0.5rem;
   background-color: #1A1A1A;
-  border: 1px solid #FFD700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   color: #FFFFFF;
   font-size: 1rem;
 }
 
-/* Botão */
 .login-button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #FFD700;
-  color: #000000;
+  background-color: rgba(17, 17, 17, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  color: #FFF;
   border: none;
   border-radius: 6px;
   font-weight: bold;
@@ -82,7 +84,7 @@ body, html {
 }
 
 .login-button:hover {
-  background-color: #e6c200; /* Dourado mais escuro no hover */
+  background-color: #111;
 }
 
 /* Preview da imagem */
@@ -90,5 +92,4 @@ img.preview {
   margin-top: 1rem;
   max-width: 100%;
   border-radius: 8px;
-  border: 2px solid #FFD700;
 }
