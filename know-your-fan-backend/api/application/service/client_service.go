@@ -123,7 +123,7 @@ func (c *ClientService) consumeMessage(id, name string) bool {
 	select {
 	case valid := <-resultChan:
 		return valid
-	case <-time.After(15 * time.Second):
+	case <-time.After(1 * time.Second):
 		return false
 	}
 
