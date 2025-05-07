@@ -6,8 +6,6 @@ import './Document.css';
 export default function Document() {
   const location = useLocation();
   const navigate = useNavigate();
-  
-
   useEffect(() => {
     if (!location.state) {
       navigate('/');
