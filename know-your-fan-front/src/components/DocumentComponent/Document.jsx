@@ -39,7 +39,7 @@ export default function Document() {
         if (status === 'Aprovado') {
           setToastMessage('Documento validado com sucesso');
         } else {
-          setToastMessage('Erro ao validar documento, enviamos um email com mais informações');
+          setToastMessage('Erro ao validar documento, enviamos um email com mais informações. Ou tente novamente.');
         }
       } else {
         setToastMessage('Erro ao validar documento, enviamos um email com mais informações');
