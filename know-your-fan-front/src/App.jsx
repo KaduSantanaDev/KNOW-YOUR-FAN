@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
-import Toast from './components/Toast';
-import Nav from './components/Nav';
+import Toast from './components/ToastComponent/Toast';
+
+import Nav from './components/NavComponent/Nav';
 
 export default function App() {
   const [showToast, setShowToast] = useState(false);
