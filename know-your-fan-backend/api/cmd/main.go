@@ -54,7 +54,7 @@ func main() {
 
 	r.Post("/api/v1/clients", clientHandler.Create)
 	r.Get("/api/v1/clients", clientHandler.GetAll)
-	r.Get("/api/v1/clients/{id}", clientHandler.GetByID)
+	r.Get("/api/v1/clients", clientHandler.GetByID)
 
 	log.Println("Servidor ouvindo em http://localhost:3031")
 	if err := http.ListenAndServe(":3031", r); err != nil {
