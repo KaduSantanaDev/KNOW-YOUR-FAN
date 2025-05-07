@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
 import Toast from './components/ToastComponent/Toast';
-
+import { useNavigate } from 'react-router-dom';
 import Nav from './components/NavComponent/Nav';
 
 export default function App() {
+  const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   
@@ -42,8 +43,20 @@ export default function App() {
         method: "POST",
         body: formData,
       });
+      
       setToastMessage('Cadastro realizado com sucesso!');
       setShowToast(true);
+      const data = await res.json();
+      console.log(data);
+      const client = data.client;
+      navigate('/document', {
+        state: {
+          name: client.Name,
+          email: client.Email,
+          status: client.Status ? 'Aprovado' : 'Pendente',
+          id: client.ID,
+        },
+      });
     } catch (err) {
       console.error('Error:', err);
       setToastMessage('Erro ao realizar cadastro. Tente novamente.');
