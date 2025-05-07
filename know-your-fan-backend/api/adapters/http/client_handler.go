@@ -63,18 +63,19 @@ func (c *ClientHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updatedClient, err := c.ClientService.UpdateStatus(createdClient)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]any{
-			"message": "error updating client status",
+			"message": "error getting client",
 			"error":   err.Error(),
 		})
+		return
 	}
+
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]any{
 		"message": "client created",
-		"client":  updatedClient,
+		"client":  createdClient,
 	})
 }
 
@@ -98,5 +99,38 @@ func (c *ClientHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]any{
 		"message": "clients retrieved",
 		"clients": clients,
+	})
+}
+
+func (c *ClientHandler) GetByID(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	client, err := c.ClientService.GetByID(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]any{
+			"message": "error getting client",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	clientDTO := RetrieveClientDTO{
+		Name:   client.GetName(),
+		Email:  client.GetEmail(),
+		CPF:    client.GetCPF(),
+		Status: client.GetStatus(),
+	}
+
+	if client.GetStatus() {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]any{
+			"message": "client retrieved",
+			"client":  clientDTO,
+		})
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]any{
+		"message": "client must be activated",
+		"client":  clientDTO,
 	})
 }

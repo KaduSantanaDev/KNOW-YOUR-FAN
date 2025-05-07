@@ -6,10 +6,30 @@ import pytesseract
 from confluent_kafka import Consumer, Producer
 from PIL import Image
 import producer
+import psycopg2
+
+conn = psycopg2.connect(
+    host='postgres',
+    dbname='knowyourfan',
+    user='root',
+    password='secret'
+)
+
+def update_client_status(client_id, status=True, conn=conn):
+    try:
+        
+        cur = conn.cursor()
+        cur.execute("UPDATE clients SET status = %s WHERE id = %s", (status, client_id))
+        conn.commit()
+        cur.close()
+        print(f"✅ Status do cliente {client_id} atualizado para {status}")
+    except Exception as e:
+        print(f"❌ Erro ao atualizar status no banco: {e}")
 
 c = Consumer({
     'bootstrap.servers': 'kafka:9092',
     'group.id': 'test',
+    'auto.offset.reset': 'earliest'
 })
 
 c.subscribe(['document-validation'])
@@ -50,6 +70,9 @@ while True:
         
         if name.lower() in extracted_text.lower():
             producer.send_validation_result(id, name, True)
+            update_client_status(id, True)
+            c.commit(msg)
+            print("✅ Offset comitado com sucesso.")
             continue
         
     except Exception as e:
@@ -57,5 +80,4 @@ while True:
         continue    
     c.commit(msg)
     print("✅ Offset comitado com sucesso.")
-c.close()
 

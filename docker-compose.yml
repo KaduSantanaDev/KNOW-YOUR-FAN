@@ -64,12 +64,12 @@ services:
       - "9094:9094"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+
     networks:
       - kafka-host
 
@@ -85,6 +85,18 @@ services:
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_CONNECT_CLUSTER: http://app-connect:8083
       PORT: 9021
+    networks:
+      - kafka-host
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      - kafka
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "sleep 10 &&
+       kafka-topics --create --topic document-validation --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 &&
+       kafka-topics --create --topic document-validation-result --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092"
     networks:
       - kafka-host
 

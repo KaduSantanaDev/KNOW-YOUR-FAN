@@ -1,51 +1,24 @@
-# -------------------------
-# Stage 1: Build environment
-# -------------------------
-    FROM python:3.11-slim AS builder
+FROM python:3.11-slim
 
-    # Instala dependências do sistema necessárias
-    RUN apt-get update && apt-get install -y \
-        tesseract-ocr \
-        libglib2.0-0 \
-        libsm6 \
-        libxext6 \
-        libxrender-dev \
-        gcc \
-        g++ \
-        && apt-get clean
-    
-    # Define o diretório de trabalho
-    WORKDIR /app
-    
-    # Copia apenas o requirements.txt primeiro (melhor cache)
-    COPY requirements.txt .
-    
-    # Instala dependências no diretório local
-    RUN pip install --prefix=/install --no-cache-dir -r requirements.txt
-    
-    # -------------------------
-    # Stage 2: Runtime
-    # -------------------------
-    FROM python:3.11-slim AS runtime
-    
-    # Instala apenas o runtime necessário do sistema
-    RUN apt-get update && apt-get install -y \
-        tesseract-ocr \
-        libglib2.0-0 \
-        libsm6 \
-        libxext6 \
-        libxrender-dev \
-        && apt-get clean
-    
-    # Diretório de trabalho
-    WORKDIR /app
-    
-    # Copia dependências instaladas da stage anterior
-    COPY --from=builder /install /usr/local
-    
-    # Copia o código-fonte
-    COPY . .
-    
-    # Comando de inicialização
-    CMD ["python", "main.py"]
-    
+# Instala dependências do sistema
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    tesseract-ocr \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Define diretório de trabalho
+WORKDIR /app
+
+# Copia requirements e instala pacotes
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
+# Copia o código da aplicação
+COPY . .
+
+# Define ponto de entrada
+ENTRYPOINT ["python", "main.py"]
