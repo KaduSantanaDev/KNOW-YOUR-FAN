@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import './App.css';
-import Toast from './components/ToastComponent/Toast';
+import './Register.css';
+import Toast from '../ToastComponent/Toast';
 import { useNavigate } from 'react-router-dom';
-import Nav from './components/NavComponent/Nav';
 
-export default function App() {
+export default function Register() {
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -47,7 +46,6 @@ export default function App() {
       setToastMessage('Cadastro realizado com sucesso!');
       setShowToast(true);
       const data = await res.json();
-      console.log(data);
       const client = data.client;
       navigate('/document', {
         state: {
@@ -58,7 +56,6 @@ export default function App() {
         },
       });
     } catch (err) {
-      console.error('Error:', err);
       setToastMessage('Erro ao realizar cadastro. Tente novamente.');
       setShowToast(true);
     }
@@ -66,7 +63,6 @@ export default function App() {
 
   return (
     <>
-      <Nav className="navbar-container" />
       <div className="login-container">
         <Toast 
         show={showToast}

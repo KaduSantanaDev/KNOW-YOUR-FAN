@@ -1,69 +1,72 @@
-import Nav from '../NavComponent/Nav';
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Toast from '../ToastComponent/Toast';
+import './Document.css';
 
 export default function Document() {
-    const location = useLocation();
-    const { name, status, id, email } = location.state;
-    const [afterStatus, setAfterStatus] = useState(status);
-    console.log(status);
+  const location = useLocation();
+  const navigate = useNavigate();
+  
 
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState('');
-    
-    console.log({"ID": id});
-    const handleValidateDocument = async (e) => {
-        e.preventDefault();
-        try {
-          const res = await fetch(`http://localhost:3031/api/v1/clients?id=${id}`, {
-            method: 'GET',
-          });
-      
-          if (!res.ok) {
-            setToastMessage('Erro ao validar documento, enviamos um email com mais informações');
-            setShowToast(true);
-          }
-      
-          const data = await res.json();
-          if (data && data.client) {
-            const status = data.client.status ? 'Aprovado' : 'Pendente';
-            setAfterStatus(status);
-          } else {
-            console.warn('Resposta inesperada:', data);
-            setAfterStatus(null);
-          }
-        } catch (error) {
-          console.error('Erro ao validar documento:', error);
-          setAfterStatus(null);
+  useEffect(() => {
+    if (!location.state) {
+      navigate('/');
+    }
+  }, [location, navigate]);
+
+  if (!location.state) return null;
+
+  const { name, status, id, email } = location.state;
+  const [afterStatus, setAfterStatus] = useState(status);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const handleValidateDocument = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:3031/api/v1/clients?id=${id}`, {
+        method: 'GET',
+      });
+
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      const data = await res.json();
+      if (data && data.client) {
+        const status = data.client.status ? 'Aprovado' : 'Pendente';
+        setAfterStatus(status);
+        if (status === 'Aprovado') {
+          setToastMessage('Documento validado com sucesso');
+        } else {
+          setToastMessage('Erro ao validar documento, enviamos um email com mais informações');
         }
-      };
+      } else {
+        setToastMessage('Erro ao validar documento, enviamos um email com mais informações');
+      }
+    } catch (error) {
+      setToastMessage('Erro ao validar documento, enviamos um email com mais informações');
+    } finally {
+      setShowToast(true);
+    }
+  };
 
-    return (
-        <>
-        {showToast && (
-            <Toast message={toastMessage} onClose={() => setShowToast(false)} />
-        )}
-        <Nav className="navbar-container" />
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-        <div className="card" style={{ width: '18rem' }}>
-          <div className="card-body">
-            <h5 className="card-title">Nome: {name}</h5>
-            <p className="card-text">
-              Status: {afterStatus}
-            </p>
-            <p className="card-text">
-              Email: {email}
-            </p>
-            {afterStatus === 'Aprovado' && (
-              <a href="#" className="btn btn-primary disabled cursor-not-allowed">Documento Validado</a>
-            )}
-            {afterStatus === 'Pendente' && (
-              <a className="btn btn-primary" onClick={handleValidateDocument}>Validar Documento</a>
-            )}
-          </div>
+  return (
+    <>
+      <Toast message={toastMessage} show={showToast} onClose={() => setShowToast(false)} />
+      <div className="document-container">
+        <div className="document-card">
+          <h2>Validação de Documento</h2>
+          <p><strong>Nome:</strong> {name || 'Não possui nome'}</p>
+          <p><strong>Email:</strong> {email || 'Não possui email'}</p>
+          <p><strong>Status:</strong> {afterStatus || 'Pendente'}</p>
+          {afterStatus === 'Aprovado' ? (
+            <button className="disabled-button" disabled>Documento Validado</button>
+          ) : (
+            <button className="login-button" onClick={handleValidateDocument}>Validar Documento</button>
+          )}
         </div>
       </div>
-      </>
-    );
-  }
+    </>
+  );
+}
