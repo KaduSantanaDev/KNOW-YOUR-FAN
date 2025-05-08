@@ -18,6 +18,6 @@ def send_validation_result(id, name, is_valid):
             key=str(id).encode('utf-8')
         )
         producer.flush()
-        print("📤 Resultado enviado com sucesso.")
+        print("Resultado enviado com sucesso.")
     except Exception as e:
-        print(f"❌ Erro ao enviar resultado: {e}")
+        print(f"Erro ao enviar resultado: {e}")

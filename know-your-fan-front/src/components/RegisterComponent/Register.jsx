@@ -42,6 +42,7 @@ export default function Register() {
         method: "POST",
         body: formData,
       });
+
       
       setToastMessage('Cadastro realizado com sucesso!');
       setShowToast(true);
@@ -51,7 +52,7 @@ export default function Register() {
         state: {
           name: client.Name,
           email: client.Email,
-          status: client.Status ? 'Aprovado' : 'Pendente',
+          status: client.Status,
           id: client.ID,
         },
       });
