@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/KaduSantanaDev/know-your-fan-api/adapters/database"
-	"github.com/KaduSantanaDev/know-your-fan-api/adapters/messenger"
-	"github.com/KaduSantanaDev/know-your-fan-api/application"
+	"github.com/KaduSantanaDev/document-validation-api/adapters/database"
+	"github.com/KaduSantanaDev/document-validation-api/adapters/messenger"
+	"github.com/KaduSantanaDev/document-validation-api/application"
 )
 
 type ClientService struct {

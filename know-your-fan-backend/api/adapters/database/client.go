@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/KaduSantanaDev/know-your-fan-api/application"
+	"github.com/KaduSantanaDev/document-validation-api/application"
 )
 
 type ClientDB struct {

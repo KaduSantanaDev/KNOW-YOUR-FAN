@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/KaduSantanaDev/know-your-fan-api/adapters/database"
-	handlers "github.com/KaduSantanaDev/know-your-fan-api/adapters/http"
-	"github.com/KaduSantanaDev/know-your-fan-api/application/service"
+	"github.com/KaduSantanaDev/document-validation-api/adapters/database"
+	handlers "github.com/KaduSantanaDev/document-validation-api/adapters/http"
+	"github.com/KaduSantanaDev/document-validation-api/application/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"

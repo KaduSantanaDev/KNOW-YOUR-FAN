@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/KaduSantanaDev/know-your-fan-api/application"
-	"github.com/KaduSantanaDev/know-your-fan-api/application/service"
+	"github.com/KaduSantanaDev/document-validation-api/application"
+	"github.com/KaduSantanaDev/document-validation-api/application/service"
 )
 
 type ClientHandler struct {
