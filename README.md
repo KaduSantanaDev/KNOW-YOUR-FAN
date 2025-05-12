@@ -22,7 +22,7 @@ O **ValidationAPP** é um sistema que valida eletronicamente documentos de ident
 ### Visão Geral e Features
 
 - Validação OCR de imagens de RG (via Python + Tesseract)  
-- API Gateway em Go com arquitetura hexagonal  
+- API em Go com arquitetura hexagonal  
 - Comunicação assíncrona via Apache Kafka  
 - Persistência em PostgreSQL  
 - UI em React para cadastro e consulta de clientes  
