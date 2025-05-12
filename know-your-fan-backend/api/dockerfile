@@ -1,11 +1,39 @@
-FROM golang:1.23.8
+# → etapa de build
+FROM golang:1.23.8 AS builder
 
-WORKDIR /app
+WORKDIR /app/api
 
+# 1) baixa módulos
+COPY go.mod go.sum ./
+RUN go mod download
+
+# 2) copia todo o código
 COPY . .
 
-RUN go mod tidy
+# 3) puxa o .env que você moveu para cmd/
+#    e coloca numa posição onde godotenv.Load(".env") vai achar
+COPY cmd/.env .env
+
+# 4) compila o binário
 RUN go build -o server ./cmd
+
+# → etapa final enxuta
+FROM debian:stable-slim
+
+ENV DOCKERIZE_VERSION v0.9.3
+
+RUN apt-get update \
+ && apt-get install -y wget ca-certificates \
+ && wget -qO- \
+      https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/\
+dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+      | tar xz -C /usr/local/bin \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app/api
+
+COPY --from=builder /app/api/server ./
+COPY --from=builder /app/api/.env .env
 
 EXPOSE 3031
 

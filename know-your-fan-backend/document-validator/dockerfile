@@ -1,24 +1,51 @@
-FROM python:3.11-slim
+# → Stage 1: Builder (compila e empacota as wheels)
+FROM python:3.11-slim AS builder
 
-# Instala dependências do sistema
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    tesseract-ocr \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-# Define diretório de trabalho
 WORKDIR /app
 
-# Copia requirements e instala pacotes
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# Instala dependências de compilação
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       gcc \
+       libglib2.0-dev \
+       libsm6 \
+       libxext6 \
+       libxrender-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copia o código da aplicação
+# Gera wheels a partir do requirements
+COPY requirements.txt .
+RUN pip wheel --no-cache-dir --wheel-dir=/wheels -r requirements.txt
+
+# → Stage 2: Runtime
+FROM python:3.11-slim
+
+ENV DOCKERIZE_VERSION v0.9.3
+WORKDIR /app
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      tesseract-ocr \
+      libglib2.0-0 \
+      libsm6 \
+      libxext6 \
+      libxrender1 \
+      wget \
+ && wget -qO- "https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" \
+      | tar xz -C /usr/local/bin \
+ && rm -rf /var/lib/apt/lists/*
+
+# 2) Copia as wheels e instala sem rebuild
+COPY --from=builder /wheels /wheels
+COPY requirements.txt .
+RUN pip install --no-cache-dir \
+      --no-index \
+      --find-links=/wheels \
+      -r requirements.txt \
+    && rm -rf /wheels
+
+# 3) Copia o código da aplicação
 COPY . .
 
-# Define ponto de entrada
-ENTRYPOINT ["python", "main.py"]
+# 4) Comando padrão (pode ser sobreposto pelo docker-compose)
+CMD ["python", "main.py"]
