@@ -25,7 +25,7 @@ O **ValidationAPP** é um sistema que valida eletronicamente documentos de ident
 - API em Go com arquitetura hexagonal  
 - Comunicação assíncrona via Apache Kafka  
 - Persistência em PostgreSQL  
-- UI em React para cadastro e consulta de clientes  
+- UI em React para cadastro, consulta e validação de documentos de clientes
 
 ## Tecnologias
 
