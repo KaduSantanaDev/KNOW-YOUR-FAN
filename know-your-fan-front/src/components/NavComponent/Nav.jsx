@@ -9,8 +9,8 @@ const Nav = () => {
     <nav className="nav-container">
       <div className="nav-content">
         <div className="nav-logo">
-          <img src={background} alt="Logo Know Your Fan" className="nav-logo-img" />
-          <h1>Know Your Fan</h1>
+          <img src={background} alt="Logo Validation Service" className="nav-logo-img" />
+          <h1>Validation Service</h1>
         </div>
         <div className="nav-links">
           <a onClick={() => navigate('/')} className="nav-link">Home</a>
