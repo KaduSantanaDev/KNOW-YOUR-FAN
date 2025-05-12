@@ -18,9 +18,9 @@ import (
 )
 
 func init() {
-	err := godotenv.Load()
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Println("Arquivo .env não encontrado, usando variáveis do sistema")
+		log.Println("Arquivo .env não encontrado, usando variáveis do sistema", err)
 	}
 }
 
