@@ -33,7 +33,7 @@ O **ValidationAPP** é um sistema que valida eletronicamente documentos de ident
 - **Front-End**: React, JavaScript, Bootstrap, React Router
 
 ## Arquitetura
-![Diagrama de Arquitetura](imgs/arch.png)
+![Diagrama de Arquitetura](imgs/Arch.png)
 
 ## Pré-requisitos
 
