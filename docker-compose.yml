@@ -31,12 +31,17 @@ services:
     build:
       context: ./know-your-fan-backend/api
     container_name: gateway
-    volumes:
-      - ./know-your-fan-backend/api:/go/src/
     ports:
       - "3031:3031"
     networks:
       - kafka-host
+    entrypoint:
+      - dockerize
+      - -wait
+      - tcp://postgres:5432
+      - -timeout
+      - "30s"
+      - ./server
     depends_on:
       - postgres
   
@@ -48,6 +53,14 @@ services:
       - kafka-host
     depends_on:
       - kafka
+    entrypoint:
+      - dockerize
+      - -wait
+      - tcp://kafka:9092
+      - -timeout
+      - "30s"
+      - python 
+      - main.py
 
   zookeeper:
     container_name: zookeeper
