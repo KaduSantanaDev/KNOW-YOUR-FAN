@@ -17,7 +17,7 @@
 
 ## Descrição
 
-O **ValidationAPP** é um sistema que valida eletronicamente documentos de identidade (RG) usando OCR e microserviços com comunicação via Apache Kafka.  
+O **ValidationAPP** é um sistema que valida eletronicamente documentos de identidade (RG) usando OCR e microsserviços com comunicação via Apache Kafka.  
 
 ### Visão Geral e Features
 
